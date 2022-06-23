@@ -15,8 +15,8 @@
 //#include "../sample.h"
 int wav_position = 0;
 int counter = 0;
-int counter_max = 100;
-int amplitude = 100;
+int counter_max = 25;  // 1.85kHz
+int amplitude = 120;
 int value = 128 - amplitude;
 int rnd_bit = 1;
 /*
@@ -73,6 +73,19 @@ void pwm_interrupt_handler2() {
 //    }
 }
 
+void pwm_interrupt_handler3() {
+    pwm_clear_irq(pwm_gpio_to_slice_num(AUDIO_PIN)); 
+    counter++;   
+    if (counter > counter_max) {
+      counter -= counter_max;
+    }
+
+    value = int (128 + amplitude * sin(counter * 6.28 / (float)(counter_max)));
+ //   Serial.println(value);
+
+    pwm_set_gpio_level(AUDIO_PIN, value);  
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -86,6 +99,9 @@ void setup() {
   pinMode(27, INPUT);
   
   Serial1.begin(9600);
+  delay(2000);
+  Serial.println("Starting up!");
+  
   delay(500);
 //  Serial1.println("AT+DMOSETGROUP=0,434.9000,434.9000,1,2,1,1\r");
   Serial1.println("AT+DMOSETGROUP=0,434.9000,434.9000,1,2,1,1\r");
@@ -98,7 +114,8 @@ void loop() {
      * multiple of typical audio sampling rates.
      */
 //    stdio_init_all();
-    set_sys_clock_khz(176000, true); 
+//    set_sys_clock_khz(176000, true); 
+    set_sys_clock_khz(125000, true); 
     gpio_set_function(AUDIO_PIN, GPIO_FUNC_PWM);
 
     int audio_pin_slice = pwm_gpio_to_slice_num(AUDIO_PIN);
@@ -107,7 +124,7 @@ void loop() {
     pwm_clear_irq(audio_pin_slice);
     pwm_set_irq_enabled(audio_pin_slice, true);
     // set the handle function above
-    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_interrupt_handler2); 
+    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_interrupt_handler3); 
     irq_set_enabled(PWM_IRQ_WRAP, true);
 
     // Setup PWM for audio output
@@ -131,5 +148,7 @@ void loop() {
 
     while(1) {
         __wfi(); // Wait for Interrupt
+        delay(1000);
+        Serial.println("Working");
     }
 }
