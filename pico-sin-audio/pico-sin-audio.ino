@@ -12,7 +12,7 @@
  * if you want to know how to make these please see the python code
  * for converting audio samples into static arrays. 
  */
-#include "sample.h"
+//#include "../sample.h"
 int wav_position = 0;
 int counter = 0;
 int counter_max = 100;
@@ -27,6 +27,8 @@ int rnd_bit = 1;
  * adjust by factor of 8   (this is what bitshifting <<3 is doing)
  * 
  */
+ 
+/* 
 void pwm_interrupt_handler() {
     pwm_clear_irq(pwm_gpio_to_slice_num(AUDIO_PIN));    
     if (wav_position < (WAV_DATA_LENGTH<<3) - 1) { 
@@ -39,6 +41,7 @@ void pwm_interrupt_handler() {
         wav_position = 0;
     }
 }
+*/
 
 void pwm_interrupt_handler2() {
     pwm_clear_irq(pwm_gpio_to_slice_num(AUDIO_PIN)); 
