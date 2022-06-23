@@ -73,7 +73,21 @@ void pwm_interrupt_handler2() {
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+ pinMode(17, OUTPUT);
+  digitalWrite(17, LOW);  // start transmitting
 
+  pinMode(22, OUTPUT);
+  digitalWrite(22, HIGH);
+
+  pinMode(28, INPUT);
+  pinMode(27, INPUT);
+  
+  Serial1.begin(9600);
+  delay(500);
+//  Serial1.println("AT+DMOSETGROUP=0,434.9000,434.9000,1,2,1,1\r");
+  Serial1.println("AT+DMOSETGROUP=0,434.9000,434.9000,1,2,1,1\r");
+  delay(500);
+  
 }
 
 void loop() {
