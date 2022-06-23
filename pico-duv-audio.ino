@@ -5,7 +5,7 @@
 #include "hardware/sync.h" // wait for interrupt 
  
 // Audio PIN is to match some of the design guide shields. 
-#define AUDIO_PIN 28  // you can change this to whatever you like
+#define AUDIO_PIN 26  // you can change this to whatever you like
 
 /* 
  * This include brings in static arrays which contain audio samples. 
@@ -14,7 +14,11 @@
  */
 #include "sample.h"
 int wav_position = 0;
-
+int counter = 0;
+int counter_max = 100;
+int amplitude = 100;
+int value = 128 - amplitude;
+int rnd_bit = 1;
 /*
  * PWM Interrupt Handler which outputs PWM level and advances the 
  * current sample. 
@@ -36,11 +40,47 @@ void pwm_interrupt_handler() {
     }
 }
 
-int main(void) {
+void pwm_interrupt_handler2() {
+    pwm_clear_irq(pwm_gpio_to_slice_num(AUDIO_PIN)); 
+    counter++;   
+ //   if (wav_position < (WAV_DATA_LENGTH<<3) - 1) { 
+        // set pwm level 
+        // allow the pwm value to repeat for 8 cycles this is >>3 
+
+
+        if (counter > 450) {
+          counter -= 450;
+          if (random(0,2) == 1)
+            rnd_bit *= (-1.0);
+        
+          if ((value == (128 - amplitude)) && (rnd_bit == 1)) {
+            value = 128 + amplitude;
+            Serial.println("High");
+          }
+          else {
+            value = 128 - amplitude; 
+            Serial.println("Low");
+          }
+        }  
+        pwm_set_gpio_level(AUDIO_PIN, value);  
+        wav_position++;
+//    } else {
+        // reset to start
+//        wav_position = 0;
+//    }
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+
+}
+
+void loop() {
     /* Overclocking for fun but then also so the system clock is a 
      * multiple of typical audio sampling rates.
      */
-    stdio_init_all();
+//    stdio_init_all();
     set_sys_clock_khz(176000, true); 
     gpio_set_function(AUDIO_PIN, GPIO_FUNC_PWM);
 
@@ -50,7 +90,7 @@ int main(void) {
     pwm_clear_irq(audio_pin_slice);
     pwm_set_irq_enabled(audio_pin_slice, true);
     // set the handle function above
-    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_interrupt_handler); 
+    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_interrupt_handler2); 
     irq_set_enabled(PWM_IRQ_WRAP, true);
 
     // Setup PWM for audio output
