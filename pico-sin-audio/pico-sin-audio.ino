@@ -16,7 +16,7 @@
 int wav_position = 0;
 int counter = 0;
 int counter_max = 25;  // 1.85kHz
-int amplitude = 1200;
+int amplitude = 12000;
 int center = 2^15;
 int value = center - amplitude;
 int rnd_bit = 1;
@@ -141,8 +141,10 @@ void loop() {
      *  4.0f for 22 KHz
      *  2.0f for 44 KHz etc
      */
-    pwm_config_set_clkdiv(&config, 8.0f); 
-    pwm_config_set_wrap(&config, 250); 
+//    pwm_config_set_clkdiv(&config, 8.0f); 
+//    pwm_config_set_wrap(&config, 250); 
+    pwm_config_set_clkdiv(&config, 125.0); 
+    pwm_config_set_wrap(&config, 125.0); 
     pwm_init(audio_pin_slice, &config, true);
 
     pwm_set_gpio_level(AUDIO_PIN, 0);
