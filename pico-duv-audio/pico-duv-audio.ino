@@ -15,7 +15,7 @@
 #include "sample.h"
 int wav_position = 0;
 int counter = 0;
-int counter_max = 100;
+int counter_max = 300;
 int amplitude = 100;
 int value = 128 - amplitude;
 int rnd_bit = 1;
@@ -48,8 +48,8 @@ void pwm_interrupt_handler2() {
         // allow the pwm value to repeat for 8 cycles this is >>3 
 
 
-        if (counter > 450) {
-          counter -= 450;
+        if (counter > counter_max) {
+          counter -= counter_max;
           if (random(0,2) == 1)
             rnd_bit *= (-1.0);
         
@@ -73,6 +73,11 @@ void pwm_interrupt_handler2() {
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
+  digitalWrite(LED_BUILTIN, LOW);  
+  
  pinMode(17, OUTPUT);
   digitalWrite(17, LOW);  // start transmitting
 
