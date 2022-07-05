@@ -16,8 +16,9 @@
 int wav_position = 0;
 int counter = 0;
 int counter_max = 25;  // 1.85kHz
-int amplitude = 120;
-int value = 128 - amplitude;
+int amplitude = 1200;
+int center = 2^15;
+int value = center - amplitude;
 int rnd_bit = 1;
 /*
  * PWM Interrupt Handler which outputs PWM level and advances the 
@@ -56,12 +57,12 @@ void pwm_interrupt_handler2() {
           if (random(0,2) == 1)
             rnd_bit *= (-1.0);
         
-          if ((value == (128 - amplitude)) && (rnd_bit == 1)) {
-            value = 128 + amplitude;
+          if ((value == (center - amplitude)) && (rnd_bit == 1)) {
+            value = center + amplitude;
             Serial.println("High");
           }
           else {
-            value = 128 - amplitude; 
+            value = center - amplitude; 
             Serial.println("Low");
           }
         }  
@@ -80,7 +81,7 @@ void pwm_interrupt_handler3() {
       counter -= counter_max;
     }
 
-    value = int (128 + amplitude * sin(counter * 6.28 / (float)(counter_max)));
+    value = int (center + amplitude * sin(counter * 6.28 / (float)(counter_max)));
  //   Serial.println(value);
 
     pwm_set_gpio_level(AUDIO_PIN, value);  
