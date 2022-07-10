@@ -12,7 +12,7 @@
  * if you want to know how to make these please see the python code
  * for converting audio samples into static arrays. 
  */
-#include "sample.h"
+//#include "sample.h"
 int wav_position = 0;
 int counter = 0;
 int counter_max = 100;
@@ -21,6 +21,9 @@ int value = 128 - amplitude;
 int rnd_bit = 1;
 
 bool polarity = 1;
+pwm_config config;
+int audio_pin_slice;
+
 /*
  * PWM Interrupt Handler which outputs PWM level and advances the 
  * current sample. 
@@ -42,6 +45,7 @@ void pwm_interrupt_handler() {
         wav_position = 0;
     }
 }
+
 
 void pwm_interrupt_handler2() {
     pwm_clear_irq(pwm_gpio_to_slice_num(AUDIO_PIN)); 
@@ -73,6 +77,11 @@ void pwm_interrupt_handler2() {
 //    }
 }
 */
+
+void pwm_interrupt_handler4() {
+    pwm_clear_irq(pwm_gpio_to_slice_num(AUDIO_PIN)); 
+    counter++; 
+}
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -95,17 +104,17 @@ void setup() {
     set_sys_clock_khz(125000, true); 
     gpio_set_function(AUDIO_PIN, GPIO_FUNC_PWM);
 
-//    int audio_pin_slice = pwm_gpio_to_slice_num(AUDIO_PIN);
+    audio_pin_slice = pwm_gpio_to_slice_num(AUDIO_PIN);
 
     // Setup PWM interrupt to fire when PWM cycle is complete
-//    pwm_clear_irq(audio_pin_slice);
-//    pwm_set_irq_enabled(audio_pin_slice, true);
+    pwm_clear_irq(audio_pin_slice);
+    pwm_set_irq_enabled(audio_pin_slice, true);
     // set the handle function above
-//    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_interrupt_handler2); 
-//    irq_set_enabled(PWM_IRQ_WRAP, true);
+    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_interrupt_handler4); 
+    irq_set_enabled(PWM_IRQ_WRAP, true);
 
     // Setup PWM for audio output
-    pwm_config config = pwm_get_default_config();
+    config = pwm_get_default_config();
     /* Base clock 176,000,000 Hz divide by wrap 250 then the clock divider further divides
      * to set the interrupt rate. 
      * 
@@ -117,7 +126,7 @@ void setup() {
      *  4.0f for 22 KHz
      *  2.0f for 44 KHz etc
      */
-    pwm_config_set_clkdiv(&config, 8.0f); 
+    pwm_config_set_clkdiv(&config, 250.0); //8.0f); 
     pwm_config_set_wrap(&config, 250); 
     pwm_init(audio_pin_slice, &config, true);
 
@@ -132,13 +141,14 @@ void loop() {
 //    stdio_init_all();
    
   /*
-   pwm_config_set_output_polarity	(	pwm_config * 	c, bool 	a, bool 	b )	
+   pwm_config_set_output_polarity  ( pwm_config *  c, bool   a, bool   b ) 
    */
-  pwm_config_set_output_polarity	(	&config, polarity, polarity )	
-  
+  pwm_config_set_output_polarity  ( &config, polarity, polarity ); 
+  pwm_init(audio_pin_slice, &config, true); 
+  pwm_set_gpio_level(AUDIO_PIN, 128); 
   polarity = not(polarity); 
-
-  delay(1);
+//  Serial.println(polarity);
+  delay(5);
 
   
 //    while(1) {
