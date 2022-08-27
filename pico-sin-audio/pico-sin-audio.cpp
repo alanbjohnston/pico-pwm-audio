@@ -1,7 +1,7 @@
 #include "pico-sin-audio.h"
  
 // Audio PIN is to match some of the design guide shields. 
-#define AUDIO_PIN 26  // you can change this to whatever you like
+//#define AUDIO_PIN 26  // you can change this to whatever you like
 
 /* 
  * This include brings in static arrays which contain audio samples. 
