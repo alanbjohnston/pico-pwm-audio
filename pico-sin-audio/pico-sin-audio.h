@@ -9,4 +9,8 @@
 #include "hardware/pwm.h"  // pwm 
 #include "hardware/sync.h" // wait for interrupt 
 
+void pwm_sin_stop();
+void pwm_sin_start();
+void pwm_sin_set_pin(); 
+
 #endif
