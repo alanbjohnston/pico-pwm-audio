@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include "pico/stdlib.h"   // stdlib 
-#include "hardware/irq.h"  // interrupts
-#include "hardware/pwm.h"  // pwm 
-#include "hardware/sync.h" // wait for interrupt 
+#include "pico-sin-audio.h"
  
 // Audio PIN is to match some of the design guide shields. 
 #define AUDIO_PIN 26  // you can change this to whatever you like
