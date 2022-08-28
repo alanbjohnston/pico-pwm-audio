@@ -9,14 +9,18 @@
  * for converting audio samples into static arrays. 
  */
 //#include "../sample.h"
-int pwm_wav_position = 0;
-int pwm_counter = 0;
-int pwm_counter_max = 25;  // 1.85kHz
-int pwm_amplitude = 120;
-int pwm_value = 128 - pwm_amplitude;
+volatile int pwm_wav_position = 0;
+volatile int pwm_counter = 0;
+volatile int pwm_counter_max = 25;  // 1.85kHz
+volatile int pwm_amplitude = 120;
+volatile int pwm_value = 128 - pwm_amplitude;
+volatile int pwm_levels = 256;
 int pwm_rnd_bit = 1;
 int pwm_audio_pin = 26;
 bool pwm_audio_on = false;
+float pwm_clk_div = 8.0;
+float pwm_clk_wrap = 250.0;
+int sin_table[255];
 
 /*
  * PWM Interrupt Handler which outputs PWM level and advances the 
@@ -41,7 +45,9 @@ void pwm_interrupt_handler3() {
       pwm_counter -= pwm_counter_max;
     }
 
-    pwm_value = int (128 + pwm_amplitude * sin(pwm_counter * 6.28 / (float)(pwm_counter_max)));
+//    pwm_value = int (128 + pwm_amplitude * sin(pwm_counter * 6.28 / (float)(pwm_counter_max)));
+    pwm_value = sin_table[pwm_counter];
+   
  //   Serial.println(value);
 
     pwm_set_gpio_level(pwm_audio_pin, pwm_value);  
@@ -79,10 +85,16 @@ void pwm_sin_start() {
      *  4.0f for 22 KHz
      *  2.0f for 44 KHz etc
      */
-    pwm_config_set_clkdiv(&config, 8.0f); 
-    pwm_config_set_wrap(&config, 250); 
+ //   pwm_config_set_clkdiv(&config, 8.0f); 
+ //   pwm_config_set_wrap(&config, 250); 
+    pwm_config_set_clkdiv(&config, pwm_clk_div); 
+    pwm_config_set_wrap(&config, pwm_clk_wrap); 
     pwm_init(audio_pin_slice, &config, true);
-
+ 
+    pwm_levels = config.top + 1;
+    Serial.print("PWM Levels: "); 
+    Serial.println(pwm_levels);
+ 
     pwm_set_gpio_level(pwm_audio_pin, 0);
  
      pwm_audio_on = true;
@@ -91,5 +103,18 @@ void pwm_sin_start() {
 void pwm_sin_stop() {
  
     pwm_audio_on = false;
+ 
+}
+
+void pwm_set_freq(int freq) {
+ 
+   pwm_counter_max =  (int) (133e6 / (pwm_clk_div * pwm_clk_wrap * freq) + 0.5);
+   Serial.print("PWM Counter Max: ");
+   Serial.println(pwm_counter_max);
+ 
+   for (int j; j<pwm_counter_max; j++) {
+     sin_table[j] = int (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max)));
+     Serial.println(sin_table[j]);
+   }
  
 }
