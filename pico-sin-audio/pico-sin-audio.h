@@ -12,5 +12,6 @@
 void pwm_sin_stop();
 void pwm_sin_start();
 void pwm_sin_set_pin(); 
+void pwm_set_freq(int freq);
 
 #endif
