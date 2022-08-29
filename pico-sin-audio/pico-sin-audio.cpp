@@ -41,7 +41,7 @@ void pwm_interrupt_handler3() {
   pwm_clear_irq(pwm_gpio_to_slice_num(pwm_audio_pin)); 
   if (pwm_audio_on) {
     pwm_counter++;   
-    if (pwm_counter > pwm_counter_max) {
+    if (pwm_counter >= pwm_counter_max) {
       pwm_counter -= pwm_counter_max;
     }
 
