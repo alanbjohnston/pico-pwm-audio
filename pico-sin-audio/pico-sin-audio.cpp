@@ -112,8 +112,8 @@ void pwm_set_freq(int freq) {
    Serial.print("PWM Counter Max: ");
    Serial.println(pwm_counter_max);
  
-   for (int j; j<pwm_counter_max; j++) {
-     sin_table[j] = int (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max)));
+   for (int j = 0; j<pwm_counter_max; j++) {
+     sin_table[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max)));
      Serial.println(sin_table[j]);
    }
  
