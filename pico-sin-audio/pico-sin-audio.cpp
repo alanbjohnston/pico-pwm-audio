@@ -26,7 +26,7 @@ int sin_table[255];
 int sin_table_1200[255];
 int sin_table_2400[255];
 
-//#define DEBUG_SIN
+#define DEBUG_SIN
 
 /*
  * PWM Interrupt Handler which outputs PWM level and advances the 
