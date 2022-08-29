@@ -73,7 +73,7 @@ void pwm_sin_start() {
 #ifdef DEBUG_SIN     
      Serial.println(sin_table_1200[j]);
 #endif   
-    
+   }
     freq = 2400;
     pwm_counter_max_2400 =  (int) (133e6 / (pwm_clk_div * pwm_clk_wrap * freq) + 0.5);
 #ifdef DEBUG_SIN  
@@ -85,7 +85,7 @@ void pwm_sin_start() {
 #ifdef DEBUG_SIN     
      Serial.println(sin_table_2400[j]);
 #endif       
-    
+   }
     /* Overclocking for fun but then also so the system clock is a 
      * multiple of typical audio sampling rates.
      */
