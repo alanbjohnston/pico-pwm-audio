@@ -22,6 +22,7 @@ int pwm_audio_pin = 26;
 bool pwm_audio_on = false;
 float pwm_clk_div = 8.0;
 float pwm_clk_wrap = 250.0;
+int sin_table[255];
 int sin_table_1200[255];
 int sin_table_2400[255];
 
