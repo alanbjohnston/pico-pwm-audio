@@ -22,6 +22,8 @@ float pwm_clk_div = 8.0;
 float pwm_clk_wrap = 250.0;
 int sin_table[255];
 
+//#define DEBUG_SIN
+
 /*
  * PWM Interrupt Handler which outputs PWM level and advances the 
  * current sample. 
@@ -92,9 +94,10 @@ void pwm_sin_start() {
     pwm_init(audio_pin_slice, &config, true);
  
     pwm_levels = config.top + 1;
+#ifdef DEBUG_SIN 
     Serial.print("PWM Levels: "); 
     Serial.println(pwm_levels);
- 
+#endif 
     pwm_set_gpio_level(pwm_audio_pin, 0);
  
      pwm_audio_on = true;
@@ -109,12 +112,15 @@ void pwm_sin_stop() {
 void pwm_set_freq(int freq) {
  
    pwm_counter_max =  (int) (133e6 / (pwm_clk_div * pwm_clk_wrap * freq) + 0.5);
+#ifdef DEBUG_SIN  
    Serial.print("PWM Counter Max: ");
    Serial.println(pwm_counter_max);
- 
+#endif 
    for (int j = 0; j<pwm_counter_max; j++) {
      sin_table[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max)));
+#ifdef DEBUG_SIN     
      Serial.println(sin_table[j]);
+#endif   
    }
  
 }
