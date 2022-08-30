@@ -130,6 +130,15 @@ void pwm_sin_start() {
     pwm_set_gpio_level(pwm_audio_pin, 0);
  
      pwm_audio_on = true;
+ 
+     pwm_set_freq(1200);
+     delay(5000);
+     pwm_set_freq(2400);
+     delay(5000);
+     pwm_set_freq(1200);
+     delay(5000);
+     pwm_sin_stop();
+     delay(5000);
 }
 
 void pwm_sin_stop() {
