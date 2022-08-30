@@ -14,6 +14,10 @@ volatile int pwm_counter = 0;
 volatile int pwm_counter_max = 25;  // 1.85kHz
 volatile int pwm_counter_max_1200;
 volatile int pwm_counter_max_2400;
+
+float pwm_counter_max_1200_float;
+float pwm_counter_max_2400_float;
+
 volatile int pwm_amplitude = 120;
 volatile int pwm_value = 128 - pwm_amplitude;
 volatile int pwm_levels = 256;
@@ -63,25 +67,27 @@ void pwm_interrupt_handler3() {
 void pwm_sin_start() {
  
     int freq = 1200;
-    pwm_counter_max_1200 =  (int) (133e6 / (pwm_clk_div * pwm_clk_wrap * freq) + 0.5);
+    pwm_counter_max_1200_float = 133e6 / (pwm_clk_div * pwm_clk_wrap * freq);
+    pwm_counter_max_1200 = (int) (pwm_counter_max_1200_float + 0.5);
 #ifdef DEBUG_SIN  
    Serial.print("PWM Counter Max for 1200: ");
    Serial.println(pwm_counter_max_1200);
 #endif 
    for (int j = 0; j<pwm_counter_max_1200; j++) {
-     sin_table_1200[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max_1200)));
+     sin_table_1200[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / pwm_counter_max_1200_float));
 #ifdef DEBUG_SIN     
      Serial.println(sin_table_1200[j]);
 #endif   
    }
     freq = 2400;
-    pwm_counter_max_2400 =  (int) (133e6 / (pwm_clk_div * pwm_clk_wrap * freq) + 0.5); //  - 1;
+    pwm_counter_max_2400_float = 133e6 / (pwm_clk_div * pwm_clk_wrap * freq);
+    pwm_counter_max_2400 = (int) (pwm_counter_max_2400_float + 0.5);
 #ifdef DEBUG_SIN  
    Serial.print("PWM Counter Max for 2400: ");
    Serial.println(pwm_counter_max_2400);
 #endif 
    for (int j = 0; j<pwm_counter_max_2400; j++) {
-     sin_table_2400[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max_2400)));
+     sin_table_2400[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / pwm_counter_max_2400_float));
 #ifdef DEBUG_SIN     
      Serial.println(sin_table_2400[j]);
 #endif       
