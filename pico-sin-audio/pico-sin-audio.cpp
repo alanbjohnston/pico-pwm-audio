@@ -137,8 +137,10 @@ void pwm_sin_start() {
      delay(5000);
      pwm_set_freq(1200);
      delay(5000);
-     pwm_sin_stop();
+     pwm_set_freq(2400);
      delay(5000);
+//     pwm_sin_stop();
+//     delay(5000);
 }
 
 void pwm_sin_stop() {
