@@ -75,7 +75,7 @@ void pwm_sin_start() {
 #endif   
    }
     freq = 2400;
-    pwm_counter_max_2400 =  (int) (133e6 / (pwm_clk_div * pwm_clk_wrap * freq) + 0.5) - 1;
+    pwm_counter_max_2400 =  (int) (133e6 / (pwm_clk_div * pwm_clk_wrap * freq) + 0.5); //  - 1;
 #ifdef DEBUG_SIN  
    Serial.print("PWM Counter Max for 2400: ");
    Serial.println(pwm_counter_max_2400);
