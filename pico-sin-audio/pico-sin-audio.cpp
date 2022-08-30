@@ -68,8 +68,8 @@ void pwm_sin_start() {
    Serial.print("PWM Counter Max for 1200: ");
    Serial.println(pwm_counter_max_1200);
 #endif 
-   for (int j = 0; j<pwm_counter_max; j++) {
-     sin_table_1200[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max)));
+   for (int j = 0; j<pwm_counter_max_1200; j++) {
+     sin_table_1200[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max_1200)));
 #ifdef DEBUG_SIN     
      Serial.println(sin_table_1200[j]);
 #endif   
@@ -80,8 +80,8 @@ void pwm_sin_start() {
    Serial.print("PWM Counter Max for 2400: ");
    Serial.println(pwm_counter_max_2400);
 #endif 
-   for (int j = 0; j<pwm_counter_max; j++) {
-     sin_table_2400[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max)));
+   for (int j = 0; j<pwm_counter_max_2400; j++) {
+     sin_table_2400[j] = (int) (125 + pwm_amplitude * sin(j * 6.28 / (float)(pwm_counter_max_2400)));
 #ifdef DEBUG_SIN     
      Serial.println(sin_table_2400[j]);
 #endif       
@@ -135,7 +135,7 @@ void pwm_sin_start() {
 void pwm_sin_stop() {
  
     pwm_audio_on = false;
- 
+    pwm_set_gpio_level(pwm_audio_pin, 0);
 }
 
 void pwm_set_freq(int freq) {
